@@ -384,8 +384,12 @@
 
   <footer class="text-center pb-10 pt-8 border-t border-white/10 mt-auto bg-[#07070a]">
     <img src="https://powerup.wearetnv.com/tnv-logo-white.png" alt="Team NuVision" class="h-6 mx-auto mb-3 opacity-40" onerror="this.style.display='none'">
-    <p class="text-[11px] text-slate-500 font-medium tracking-wide uppercase">Independent Associate Site</p>
-    <p class="text-[11px] text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">Not a corporate LegalShield page. Your next step is a conversation with the person who sent you here.</p>
+    <p class="text-[11px] text-slate-500 font-medium tracking-wide uppercase generic-only">Independent Associate Site</p>
+    <p class="text-[11px] text-slate-500 font-medium tracking-wide uppercase affiliate-only hidden">
+      <span id="footer-name">Associate</span> · Independent Associate
+    </p>
+    <p class="text-[11px] text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed generic-only">Not a corporate LegalShield page. Your next step is a conversation with the person who sent you here.</p>
+    <p class="text-[11px] text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed affiliate-only hidden">Not a corporate LegalShield page. Your next step is a conversation with <span id="footer-name-inline">this associate</span>.</p>
   </footer>
 
   <script>
@@ -581,8 +585,12 @@
 
       const nameEl = document.getElementById('associate-name');
       const hubNameEl = document.getElementById('hub-name');
+      const footerNameEl = document.getElementById('footer-name');
+      const footerInlineEl = document.getElementById('footer-name-inline');
       if (nameEl) nameEl.textContent = fullName;
       if (hubNameEl) hubNameEl.textContent = fullName;
+      if (footerNameEl) footerNameEl.textContent = fullName;
+      if (footerInlineEl) footerInlineEl.textContent = fullName;
       applyAvatar({ photoUrl: data.photoUrl || data.photo || null, fullName });
       applyHubLinks(data.hubLinks);
       setContact(data.phone, fullName);
