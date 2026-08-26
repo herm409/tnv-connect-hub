@@ -4,7 +4,7 @@ Prospect-facing link-tree. **Platinum only** for a named hub and associate photo
 
 | Item | Value |
 |------|--------|
-| **Live domain** | https://tnvconnecthub.netlify.app · https://connect.wearetnv.com (DNS pending) |
+| **Live domain** | https://connect.wearetnv.com |
 | **Netlify project** | `tnvconnecthub` (`f04de6d3-f955-4eb8-8e87-075752b1b09a`) |
 | **GitHub** | https://github.com/herm409/tnv-connect-hub |
 | **Folder** | `funnels/connect-hub/` |
@@ -35,15 +35,7 @@ npx serve .
 
 ## Deploy (Netlify + GitHub)
 
-Site is live at **https://tnvconnecthub.netlify.app**. Repo is **https://github.com/herm409/tnv-connect-hub**.
-
-Netlify cannot attach GitHub from the CLI (it needs a browser GitHub login). One-time in the Netlify UI:
-
-1. Open https://app.netlify.com/projects/tnvconnecthub/configuration/deploys
-2. **Link repository** → GitHub → `herm409/tnv-connect-hub`
-3. Branch: `main`. Build command: empty. Publish directory: `.`
-
-After that, **push `main` deploys.** Do not CLI-deploy this site unless Git is down.
+Site is live at **https://connect.wearetnv.com**. Repo is **https://github.com/herm409/tnv-connect-hub**. Git is linked in Netlify. **Push `main` to deploy.** Do not CLI-deploy this site unless Git is down.
 
 Emergency CLI (only if Git is down):
 
@@ -56,10 +48,10 @@ npx netlify-cli deploy --prod \
 
 ### Squarespace DNS (`wearetnv.com`)
 
+Custom domain is live: **https://connect.wearetnv.com**. Squarespace CNAME:
+
 | Host | Type | Data |
 |------|------|------|
 | `connect` | CNAME | `tnvconnecthub.netlify.app` |
-
-Then in Netlify → Domain management → Add domain alias → `connect.wearetnv.com`.
 
 Do not deploy from `$HOME`. In the same command: `cd` to this folder, `pwd`, `ls`.
