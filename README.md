@@ -4,8 +4,8 @@ Prospect-facing link-tree. **Platinum only** for a named hub and associate photo
 
 | Item | Value |
 |------|--------|
-| **Live domain** | https://connect.wearetnv.com |
-| **Netlify project** | `tnv-connect-hub` |
+| **Live domain** | https://tnvconnecthub.netlify.app · https://connect.wearetnv.com (DNS pending) |
+| **Netlify project** | `tnvconnecthub` (`f04de6d3-f955-4eb8-8e87-075752b1b09a`) |
 | **GitHub** | https://github.com/herm409/tnv-connect-hub |
 | **Folder** | `funnels/connect-hub/` |
 | **Query params** | `?link=USERNAME` (also `ref`, `affiliate`) + optional `?vName=` |
@@ -35,19 +35,30 @@ npx serve .
 
 ## Deploy (Netlify + GitHub)
 
-Same pattern as Reputation / Real Estate / App Hub. **Push `main` to deploy.** Do not CLI-deploy this site unless Git is down.
+Site is live at **https://tnvconnecthub.netlify.app**. Repo is **https://github.com/herm409/tnv-connect-hub**.
 
-1. This repo is connected in Netlify: **Add new site → Import from Git → `herm409/tnv-connect-hub`**.
-2. Build settings (already in `netlify.toml`):
-   - Build command: *(none — static)*
-   - Publish directory: `.`
-3. After the first deploy, copy the Netlify subdomain (e.g. `tnv-connect-hub.netlify.app`).
+Netlify cannot attach GitHub from the CLI (it needs a browser GitHub login). One-time in the Netlify UI:
+
+1. Open https://app.netlify.com/projects/tnvconnecthub/configuration/deploys
+2. **Link repository** → GitHub → `herm409/tnv-connect-hub`
+3. Branch: `main`. Build command: empty. Publish directory: `.`
+
+After that, **push `main` deploys.** Do not CLI-deploy this site unless Git is down.
+
+Emergency CLI (only if Git is down):
+
+```bash
+cd "/Volumes/Herms Drive/TNV Apps/funnels/connect-hub" && pwd && ls && \
+npx netlify-cli deploy --prod \
+  --dir="/Volumes/Herms Drive/TNV Apps/funnels/connect-hub" \
+  --site=f04de6d3-f955-4eb8-8e87-075752b1b09a
+```
 
 ### Squarespace DNS (`wearetnv.com`)
 
 | Host | Type | Data |
 |------|------|------|
-| `connect` | CNAME | `tnv-connect-hub.netlify.app` (use the exact Netlify subdomain after first deploy) |
+| `connect` | CNAME | `tnvconnecthub.netlify.app` |
 
 Then in Netlify → Domain management → Add domain alias → `connect.wearetnv.com`.
 

@@ -1,6 +1,7 @@
-# Connect Hub → https://connect.wearetnv.com
-# GitHub: herm409/tnv-connect-hub  ·  Netlify: tnv-connect-hub
-# Static site only — no build step. Push main to deploy.
+# Connect Hub → https://tnvconnecthub.netlify.app  (connect.wearetnv.com after DNS)
+# GitHub: herm409/tnv-connect-hub
+# Netlify: tnvconnecthub (f04de6d3-f955-4eb8-8e87-075752b1b09a)
+# Static site only — no build step. Push main to deploy after Git is linked in Netlify.
 # Do not set X-Frame-Options DENY; Personal Links may iframe a preview later.
 
 [build]
