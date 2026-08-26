@@ -150,7 +150,7 @@
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(30,27,75,0.45),transparent_70%)] pointer-events-none"></div>
     <div class="relative max-w-2xl mx-auto px-4 pt-16 sm:pt-20 pb-8 text-center">
       <div class="animate-fade-in-up">
-        <div class="relative w-[7.25rem] h-[7.25rem] mx-auto mb-5">
+        <div id="associate-avatar" class="relative w-[7.25rem] h-[7.25rem] mx-auto mb-5">
           <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#4cc9f0] via-[#7C3AED] to-[#f4c430] p-[2px] shadow-[0_0_40px_rgba(76,201,240,0.22)]">
             <div class="w-full h-full rounded-full bg-[#05060f] flex items-center justify-center overflow-hidden">
               <img id="associate-photo" alt="" class="hidden w-full h-full object-cover">
@@ -187,6 +187,8 @@
             <i class="fas fa-comment"></i> Text me
           </a>
         </div>
+
+        <div id="hub-social" class="hidden mt-5 flex-wrap items-center justify-center gap-2"></div>
       </div>
     </div>
   </header>
@@ -426,6 +428,83 @@
       return 'TN';
     }
 
+    const HUB_SOCIAL_ICONS = {
+      instagram: 'fab fa-instagram',
+      facebook: 'fab fa-facebook-f',
+      linkedin: 'fab fa-linkedin-in',
+      youtube: 'fab fa-youtube',
+      tiktok: 'fab fa-tiktok',
+      x: 'fab fa-x-twitter',
+      website: 'fas fa-globe',
+      other: 'fas fa-link',
+    };
+
+    function applyAvatar({ photoUrl, fullName, generic }) {
+      const wrap = document.getElementById('associate-avatar');
+      const img = document.getElementById('associate-photo');
+      const initials = document.getElementById('associate-initials');
+      const httpsPhoto = photoUrl && /^https:\/\//i.test(photoUrl);
+
+      if (generic) {
+        wrap?.classList.remove('hidden');
+        initials.textContent = 'TN';
+        initials?.classList.remove('hidden');
+        img?.classList.add('hidden');
+        if (img) img.removeAttribute('src');
+        return;
+      }
+
+      if (!httpsPhoto) {
+        // Named hub with no face: identity is the name under the hero, not a monogram.
+        wrap?.classList.add('hidden');
+        img?.classList.add('hidden');
+        if (img) img.removeAttribute('src');
+        return;
+      }
+
+      wrap?.classList.remove('hidden');
+      initials.textContent = generateInitials(fullName);
+      initials?.classList.add('hidden');
+      if (img) {
+        img.src = photoUrl;
+        img.alt = fullName ? `${fullName} photo` : '';
+        img.classList.remove('hidden');
+        img.onerror = () => {
+          wrap?.classList.add('hidden');
+          img.classList.add('hidden');
+        };
+      }
+    }
+
+    function applyHubLinks(links) {
+      const wrap = document.getElementById('hub-social');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      wrap.classList.add('hidden');
+      wrap.classList.remove('flex');
+      const list = Array.isArray(links) ? links : [];
+      const seen = new Set();
+      list.forEach((item) => {
+        const url = String(item?.url || '').trim();
+        if (!/^https:\/\//i.test(url) || seen.has(url.toLowerCase())) return;
+        seen.add(url.toLowerCase());
+        const kind = HUB_SOCIAL_ICONS[item.kind] ? item.kind : 'website';
+        const label = String(item.label || 'Link').replace(/[<>]/g, '').slice(0, 40);
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'h-10 px-3.5 rounded-full border border-white/15 bg-white/5 text-white text-[11px] font-bold uppercase tracking-wider inline-flex items-center gap-2 hover:border-white/30 hover:bg-white/10';
+        a.innerHTML = `<i class="${HUB_SOCIAL_ICONS[kind]}"></i><span></span>`;
+        a.querySelector('span').textContent = label;
+        wrap.appendChild(a);
+      });
+      if (wrap.childElementCount) {
+        wrap.classList.remove('hidden');
+        wrap.classList.add('flex');
+      }
+    }
+
     function setDocTitle(name) {
       document.title = name ? `${name} | Team NuVision` : 'Connect | Team NuVision';
       const og = document.querySelector('meta[property="og:title"]');
@@ -471,30 +550,12 @@
       document.getElementById('hero-contact')?.classList.add('flex');
     }
 
-    function applyPhoto(url) {
-      const img = document.getElementById('associate-photo');
-      const initials = document.getElementById('associate-initials');
-      if (url && /^https:\/\//i.test(url) && img) {
-        img.src = url;
-        img.alt = '';
-        img.classList.remove('hidden');
-        initials?.classList.add('hidden');
-        img.onerror = () => {
-          img.classList.add('hidden');
-          initials?.classList.remove('hidden');
-        };
-      } else {
-        img?.classList.add('hidden');
-        initials?.classList.remove('hidden');
-      }
-    }
-
     function applyGeneric() {
       document.getElementById('associate-banner')?.classList.add('hidden');
       document.querySelectorAll('.affiliate-only').forEach((el) => el.classList.add('hidden'));
       document.querySelectorAll('.generic-only').forEach((el) => el.classList.remove('hidden'));
-      document.getElementById('associate-initials').textContent = 'TN';
-      applyPhoto(null);
+      applyAvatar({ generic: true });
+      applyHubLinks(null);
       setContact(null);
       setDocTitle('');
       document.body.style.paddingTop = '0px';
@@ -522,8 +583,8 @@
       const hubNameEl = document.getElementById('hub-name');
       if (nameEl) nameEl.textContent = fullName;
       if (hubNameEl) hubNameEl.textContent = fullName;
-      document.getElementById('associate-initials').textContent = generateInitials(fullName);
-      applyPhoto(data.photoUrl || data.photo || null);
+      applyAvatar({ photoUrl: data.photoUrl || data.photo || null, fullName });
+      applyHubLinks(data.hubLinks);
       setContact(data.phone, fullName);
       setDocTitle(fullName);
 
@@ -567,6 +628,10 @@
         applyAffiliate({
           found: true, fullName: 'Herman Davis', phone: '5551234567',
           corporateUsername: 'hermandavis', status: 'active', plan: 'platinum',
+          hubLinks: [
+            { kind: 'instagram', label: 'Instagram', url: 'https://instagram.com/teamnuvision' },
+            { kind: 'website', label: 'Website', url: 'https://wearetnv.com' },
+          ],
         }, 'hermandavis');
         return;
       }
@@ -575,6 +640,9 @@
           found: true, fullName: 'Herman Davis', phone: '5551234567',
           corporateUsername: 'hermandavis', status: 'active', plan: 'platinum',
           photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=512&h=512&q=80',
+          hubLinks: [
+            { kind: 'instagram', label: 'Instagram', url: 'https://instagram.com/teamnuvision' },
+          ],
         }, 'hermandavis');
         return;
       }

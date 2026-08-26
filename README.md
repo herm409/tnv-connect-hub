@@ -11,7 +11,8 @@ Prospect-facing link-tree. **Platinum only** for a named hub and associate photo
 | **Query params** | `?link=USERNAME` (also `ref`, `affiliate`) + optional `?vName=` |
 | **Lookup** | `GET …/getAffiliate?username=` (Firebase `activitytracker-e2b7a`) |
 | **Personalization** | Named hub when `found && status === "active" && plan === "platinum"` |
-| **Photo** | `photoUrl` HTTPS only; load error falls back to initials |
+| **Photo** | `photoUrl` HTTPS only. No photo → name only (no initials circle) |
+| **Extra links** | Platinum `hubLinks` (social + personal sites). Max 8. HTTPS. |
 | **Pro / Free / missing plan / bad slug** | Generic Team NuVision page |
 | **Personal Links** | Platinum only. `id: connect-hub` |
 
