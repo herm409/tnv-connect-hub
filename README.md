@@ -13,6 +13,7 @@ Prospect-facing link-tree. **Platinum only** for a named hub and associate photo
 | **Personalization** | Named hub when `found && status === "active" && plan === "platinum"` |
 | **Photo** | `photoUrl` HTTPS only. No photo → name only (no initials circle) |
 | **Extra links** | Platinum `hubLinks` (social + personal sites). Max 8. HTTPS. |
+| **Share card** | `connect-share.png` 1200×630. Crawlers get `{Name} \| Team NuVision` via the `og-share` edge function. The associate headshot is not the OG image (square crop + crawlers skip JS). |
 | **Pro / Free / missing plan / bad slug** | Generic Team NuVision page |
 | **Personal Links** | Platinum only. `id: connect-hub` |
 
