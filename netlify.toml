@@ -1,0 +1,16 @@
+# Connect Hub → https://connect.wearetnv.com
+# GitHub: herm409/tnv-connect-hub  ·  Netlify: tnv-connect-hub
+# Static site only — no build step. Push main to deploy.
+# Do not set X-Frame-Options DENY; Personal Links may iframe a preview later.
+
+[build]
+  publish = "."
+
+[build.processing]
+  skip_processing = false
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

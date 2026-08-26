@@ -1,0 +1,16 @@
+{
+  "name": "Connect | Team NuVision",
+  "short_name": "Connect",
+  "description": "Legal protection, identity, business solutions, and a honest look at extra income — pick the door that matches your life.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05060f",
+  "theme_color": "#05060f",
+  "icons": [
+    {
+      "src": "https://powerup.wearetnv.com/tnv-logo-white.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
