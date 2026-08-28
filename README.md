@@ -9,6 +9,7 @@ Prospect-facing link-tree. **Platinum only** for a named hub and associate photo
 | **GitHub** | https://github.com/herm409/tnv-connect-hub |
 | **Folder** | `funnels/connect-hub/` |
 | **Query params** | `?link=USERNAME` (also `ref`, `affiliate`) + optional `?vName=` |
+| **Username charset** | Lookup allows letters, numbers, `.`, `_`, `-` (case-insensitive). New claims on Personal Links should be lowercase `[a-z0-9_-]` only — a period in the handle used to drop the slug and render the generic hub. |
 | **Lookup** | `GET …/getAffiliate?username=` (Firebase `activitytracker-e2b7a`) |
 | **Personalization** | Named hub when `found && status === "active" && plan === "platinum"` |
 | **Photo** | `photoUrl` HTTPS only. No photo → name only (no initials circle) |

@@ -18,7 +18,7 @@ function sanitizeUsername(raw) {
     .replace(/\.legalshieldassociate\.com.*$/i, "")
     .replace(/\/.*$/, "")
     .replace(/\s+/g, "");
-  if (!clean || !/^[a-zA-Z0-9][a-zA-Z0-9_\-]{0,63}$/.test(clean)) return null;
+  if (!clean || !/^[a-zA-Z0-9][a-zA-Z0-9._\-]{0,63}$/.test(clean)) return null;
   return clean;
 }
 
