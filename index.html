@@ -139,8 +139,9 @@
   <!-- Personalized invite bar: compact, only when affiliate + phone -->
   <div id="associate-banner" class="hidden fixed top-0 left-0 right-0 z-[60] safe-pt bg-[#05060f]/90 backdrop-blur-md border-b border-white/10">
     <div class="max-w-2xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
-      <p class="text-[12px] text-slate-300 truncate">
-        Invited by <strong id="associate-name" class="text-white font-semibold">Associate</strong>
+      <p class="text-[12px] text-slate-300 min-w-0 flex items-center gap-2">
+        <img id="associate-face" alt="" width="28" height="28" class="hidden h-7 w-7 rounded-full object-cover shrink-0">
+        <span class="truncate">Invited by <strong id="associate-name" class="text-white font-semibold">Associate</strong></span>
       </p>
       <div class="flex items-center gap-2 flex-shrink-0">
         <a id="associate-phone-link" class="hidden h-9 px-3 rounded-lg border border-white/15 text-[11px] font-black uppercase tracking-wider text-white flex items-center gap-1.5">
@@ -402,6 +403,41 @@
   <script>
     const GET_AFFILIATE_URL = 'https://us-central1-activitytracker-e2b7a.cloudfunctions.net/getAffiliate';
 
+    function platinumPhotoUrl(data) {
+      if (!data || String(data.plan || '').toLowerCase() !== 'platinum') return '';
+      const url = String(data.photoUrl || '').trim();
+      return /^https:\/\//i.test(url) && url.length <= 2048 ? url : '';
+    }
+
+    function applyAssociateFace(data) {
+      const img = document.getElementById('associate-face');
+      const ping = document.getElementById('associate-ping');
+      if (!img) return;
+      const showPing = () => {
+        img.classList.add('hidden');
+        img.classList.remove('is-on');
+        img.removeAttribute('src');
+        if (ping) ping.classList.remove('hidden');
+      };
+      const showFace = () => {
+        img.classList.remove('hidden');
+        img.classList.add('is-on');
+        if (ping) ping.classList.add('hidden');
+      };
+      img.onload = null;
+      img.onerror = null;
+      const url = platinumPhotoUrl(data);
+      if (!url) {
+        showPing();
+        return;
+      }
+      showPing();
+      img.onload = showFace;
+      img.onerror = showPing;
+      img.src = url;
+      if (img.complete && img.naturalWidth) showFace();
+    }
+
     function getQueryParam(name) {
       return new URLSearchParams(window.location.search).get(name);
     }
@@ -567,6 +603,7 @@
       document.getElementById('associate-banner')?.classList.add('hidden');
       document.querySelectorAll('.affiliate-only').forEach((el) => el.classList.add('hidden'));
       document.querySelectorAll('.generic-only').forEach((el) => el.classList.remove('hidden'));
+      applyAssociateFace(null);
       applyAvatar({ generic: true });
       applyHubLinks(null);
       setContact(null);
@@ -600,7 +637,8 @@
       if (hubNameEl) hubNameEl.textContent = fullName;
       if (footerNameEl) footerNameEl.textContent = fullName;
       if (footerInlineEl) footerInlineEl.textContent = fullName;
-      applyAvatar({ photoUrl: data.photoUrl || data.photo || null, fullName });
+      applyAvatar({ photoUrl: data.photoUrl || null, fullName });
+      applyAssociateFace(data);
       applyHubLinks(data.hubLinks);
       setContact(data.phone, fullName);
       setDocTitle(fullName);
