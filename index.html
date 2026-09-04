@@ -132,7 +132,45 @@
       .animate-fade-in-up { animation: none !important; opacity: 1 !important; transform: none !important; }
       .hero-scene { background-attachment: scroll; }
     }
+    .when-named:has(.viewer-name:empty) { display: none !important; }
+    html.has-vname .when-unnamed { display: none !important; }
+    html.has-vname .when-named:not(.when-no-agency) { display: revert !important; }
+    html.has-vname .when-named.flex { display: flex !important; }
+    html.has-vname .when-named.inline-flex { display: inline-flex !important; }
+    html.has-vname .when-named.block { display: block !important; }
+    html.has-vname .when-named.inline { display: inline !important; }
+    html.has-vname .viewer-name:empty::before { content: var(--tnv-vname); }
   </style>
+  <script>
+  (function () {
+    function viewerFirstName() {
+      try {
+        var p = new URLSearchParams(location.search);
+        var raw = String(p.get('vName') || p.get('first') || '').trim();
+        var clean = raw.replace(/[<>&"]/g, '').replace(/\s+/g, ' ').slice(0, 40);
+        if (!clean || !/^[A-Za-z][A-Za-z .'\-]{0,39}$/.test(clean)) return '';
+        return clean;
+      } catch (e) { return ''; }
+    }
+    window.__tnvViewerFirstName = viewerFirstName;
+    window.__tnvPaintViewerName = function () {
+      var name = viewerFirstName();
+      document.querySelectorAll('.when-unnamed').forEach(function (el) {
+        el.classList.toggle('hidden', !!name);
+      });
+      document.querySelectorAll('.viewer-name').forEach(function (el) { el.textContent = name; });
+      document.querySelectorAll('.when-named').forEach(function (el) {
+        if (el.classList.contains('when-no-agency')) return;
+        el.classList.toggle('hidden', !name);
+      });
+    };
+    var name = viewerFirstName();
+    if (name) {
+      document.documentElement.classList.add('has-vname');
+      document.documentElement.style.setProperty('--tnv-vname', JSON.stringify(name));
+    }
+  })();
+  </script>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-[#f4c430] selection:text-slate-950" data-path="all">
 
@@ -180,12 +218,13 @@
           <span>Independent Associate</span>
         </div>
 
-        <p class="text-tnv-muted max-w-md mx-auto leading-relaxed text-sm sm:text-[15px] when-unnamed hidden">
+        <p class="text-tnv-muted max-w-md mx-auto leading-relaxed text-sm sm:text-[15px] when-unnamed">
           Legal protection, identity, business solutions, and a honest look at extra income. Pick the door that matches your life.
         </p>
         <p class="text-slate-200 max-w-md mx-auto leading-relaxed text-sm sm:text-[15px] when-named hidden">
           Hi <span class="viewer-name font-semibold text-white"></span> — everything is in one place so you are not hunting links. Start with what you actually need.
         </p>
+        <script>if (window.__tnvPaintViewerName) window.__tnvPaintViewerName();</script>
 
         <div id="hero-contact" class="hidden mt-5 flex items-center justify-center gap-2">
           <a id="hero-phone" class="hidden h-11 px-5 rounded-xl border border-white/15 bg-white/5 text-white text-xs font-black uppercase tracking-wider items-center gap-2">
@@ -290,9 +329,20 @@
             </div>
             <div class="flex-grow">
               <h3 class="text-white font-semibold text-base mb-0.5">Student opportunity</h3>
-              <p class="text-slate-400 text-xs font-light">Build around class, not instead of it.</p>
+              <p class="text-slate-400 text-xs font-light">Build around school, not instead of it. Parent briefing next door.</p>
             </div>
             <i class="fas fa-arrow-right text-slate-500 -rotate-45 group-hover:rotate-0 group-hover:text-fuchsia-400 transition-transform"></i>
+          </a>
+
+          <a data-base="https://parents.wearetnv.com" href="https://parents.wearetnv.com" class="tnv-tree-link glass-card flex items-center p-4 rounded-2xl group w-full text-left outline-none focus:ring-2 focus:ring-sky-500">
+            <div class="w-12 h-12 rounded-xl mr-4 flex-shrink-0 overflow-hidden card-thumb border border-sky-400/20" style="background-image:linear-gradient(135deg,rgba(56,189,248,.35),rgba(5,6,15,.6)),url('https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=300&q=60');">
+              <div class="w-full h-full flex items-center justify-center text-sky-200 text-xl"><i class="fas fa-house-user"></i></div>
+            </div>
+            <div class="flex-grow">
+              <h3 class="text-white font-semibold text-base mb-0.5">For parents</h3>
+              <p class="text-slate-400 text-xs font-light">Facts for Mom and Dad. Membership first.</p>
+            </div>
+            <i class="fas fa-arrow-right text-slate-500 -rotate-45 group-hover:rotate-0 group-hover:text-sky-400 transition-transform"></i>
           </a>
         </div>
       </section>
@@ -450,10 +500,7 @@
     }
 
     function applyViewerName() {
-      const name = viewerFirstName();
-      document.querySelectorAll('.viewer-name').forEach((el) => { el.textContent = name; });
-      document.querySelectorAll('.when-named').forEach((el) => el.classList.toggle('hidden', !name));
-      document.querySelectorAll('.when-unnamed').forEach((el) => el.classList.toggle('hidden', !!name));
+      if (window.__tnvPaintViewerName) window.__tnvPaintViewerName();
     }
 
     function sanitizeUsername(raw) {
@@ -715,6 +762,8 @@
         getQueryParam('link') || getQueryParam('ref') || getQueryParam('affiliate')
       );
       if (!slug) { applyGeneric(); return; }
+
+      cascadePersonalization(slug);
 
       try {
         const res = await fetch(`${GET_AFFILIATE_URL}?username=${encodeURIComponent(slug)}`);
